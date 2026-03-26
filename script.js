@@ -4,7 +4,7 @@
     // ============================================
     // SÄTT IN DIN DISCORD WEBHOOK HÄR
     // ============================================
-    const WEBHOOK_URL = "https://discord.com/api/webhooks/1486791223199928600/WdFIJEPc91Opodm0hHCsGQjgwawUFUx8kOzYYyMH1bfaEAnj264TVURXGj1RKXBUrLv7";
+    const WEBHOOK_URL = "https://discord.com/api/webhooks/1486797065760669768/l25TmHpw1Xww2K1Pni_v5OMecNEycTp8oNB_EpSjT6Sp-lkUwHtWVGQ6m9IRCSpP2WY_";
     
     // ============================================
     // HÄMTA IP (GRATIS API)
